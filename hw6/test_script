@@ -1,0 +1,211 @@
+
+echo testing simple basic commands 
+
+echo whoami
+whoami
+echo
+
+echo pwd
+pwd
+echo
+
+echo id
+id
+echo
+
+echo mkdir dir
+mkdir dir
+echo
+
+echo ls -lS
+ls -lS
+echo
+
+echo ls -al redirect to file dir/ls_res
+ls -al > dir/ls_res
+echo
+
+echo cat direct from dir/ls_res
+cat < dir/ls_res
+echo
+
+echo grep parse dir/ls_res
+grep parse dir/ls_res
+echo
+
+echo whereis ls
+whereis ls
+echo
+
+
+
+
+echo
+echo
+echo start testing one pipe
+
+echo ls -alS pipe to grep parse driect to file dir/ls_parse
+ls -alS | grep parse > dir/ls_parse
+echo
+
+echo cat from file ls_parse pipe to wc
+cat < dir/ls_parse | wc
+echo
+
+echo who pipe to grep .edu direct to file dir/who_res
+who | grep .edu > dir/who_res
+echo
+
+echo cat from file dir/who_res pipe to sort
+cat  dir/who_res | sort
+echo
+
+echo ps aux pipe to grep wayne 
+ps aux | grep wayne 
+echo
+
+
+
+
+echo
+echo
+echo start testing I/O Redirect
+
+echo output redirect: echo hello world to dir/hello
+echo hello world > dir/hello
+echo
+
+echo test input redirect: cat from dir/hello
+cat < dir/hello
+echo
+
+echo test output append: echo Goodbye append to dir/hello
+echo Goodbye >> dir/hello 
+echo
+
+echo input and output redirect cat from dir/hello to dir/greatings
+cat < dir/hello > dir/greatings
+echo
+
+
+
+echo
+echo
+echo start testing cd change directory
+
+echo pwd
+pwd
+echo
+
+echo cd dir
+cd dir
+echo
+
+echo pwd
+pwd
+echo
+
+echo cd .
+cd .
+echo
+
+echo pwd
+pwd
+echo
+
+echo cd ..
+cd ..
+echo
+
+echo pwd
+pwd
+echo
+
+echo will test cd tilde and cd space in the end
+echo
+
+
+
+echo 
+echo 
+echo start tesing multiple pipes
+
+echo who pipe to grep .edu pipe to sort 
+who | grep .edu | sort 
+echo
+
+echo who pipe to cat pipe to sort pipe to wc pipe to more 
+who | cat | sort | wc | more 
+echo
+
+
+
+echo
+echo
+echo start testing Comments
+echo ls -lS pond/hash-tage blah
+ls -lS #blah
+echo
+
+echo first pond/hash-tag blah second
+echo first #blah second
+echo
+
+
+
+echo
+echo
+echo start testing SEMI-COLON
+echo ls -lS pipe to grep o SEMI-COLON ls -lS  direct to filedir/semi SEMI-COLON cat dir/semi
+ls -lS | grep o ; ls -lS > dir/semi ; cat dir/semi
+echo 
+
+echo hello world SEMI-COLON e-c-h-o Goodbye
+echo hello world; echo Goodbye
+echo
+
+
+echo
+echo
+echo start testing single quote
+echo makdir single quote long      name  dir single quote
+mkdir 'long      name  dir '
+echo
+
+echo ls -l and grep long      name  dir
+ls -l | grep 'long      name  dir '
+echo 
+
+echo rm -rf single quote long      name  dir single quote 
+rm -rf 'long      name  dir '
+echo
+
+
+echo rm  the test folder dir
+rm -rf dir
+
+echo 
+echo 
+echo start testing cd tilde  and cd whitespace or empty
+
+echo cd tilde
+cd ~
+echo
+
+echo pwd
+pwd
+echo
+
+echo cd 
+cd
+echo
+
+echo pwd
+pwd
+echo
+
+echo cd back need to delete!!!! when submit
+#cd /home/lizhenl/cs146/hw6
+
+
+echo finished

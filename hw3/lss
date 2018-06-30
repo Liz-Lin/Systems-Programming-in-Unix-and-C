@@ -1,0 +1,49 @@
+#!/bin/bash
+
+#boolean variable for checking if user provide any files
+is_file=false
+
+#overall two cases 
+#1: no argument provided
+if [ $# -eq 0 ]; then
+	exec /bin/ls -lS #directly ls -lS current directory
+#2: provide arguments 
+else
+	#using variable command to hold all the valid options and files
+	command="/bin/ls  "
+	#loop through all the arguments
+	for i in $@; do
+		#if a argument start with '-' then, it should be an option
+		if [[ $i = -* ]]; then
+			#check if it contians fetal options such as r/R/sort/format/help/version
+			#if so -- exit since won't produce the format we prefer (-lS)
+			if  echo "$i" | grep -q  "[rRTw]\|sort\|format\|help\|version"; then
+                		echo cannot use option -r -R sort format help version, exit
+                		exit 1
+			#check if it contains any options that might be over-write
+			#still list the lS format, since these options are not that dangous
+        		elif  echo "$i" | grep -q  [cCfmxtuUvX] ; then
+                		echo one of "$i" option will be over-write
+			fi
+			#appent current options to the original command
+			command="$command $i"
+		#this argumnet should be a file/directory
+		else
+			#set the boolean variable to ture, since it offers a file/directory
+			is_file=true
+			#append the file
+			command="$command $i"
+		fi
+	done
+	#if arguments does have files/directory, we need to make sure 
+	#they won't go in to the directory and over-write some options with -lS in the end
+	if [ "$is_file" == true  ]; then 
+		command="$command -dlS"
+	else
+		#over-write some options with -lS in the end
+		command="$command -lS"
+	fi
+	# grep
+	exec $command
+fi
+

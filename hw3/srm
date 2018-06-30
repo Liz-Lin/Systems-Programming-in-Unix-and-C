@@ -1,0 +1,74 @@
+#! /bin/bash
+# if the envir var is not set yet exit
+if [ -z ${TRASH} ]; then
+	echo no TRASH variable, exit
+	exit 1
+	#echo   >> ~/.bash_profile
+	#echo "TRASH=~/sFolder" >> ~/.bash_profile
+	#echo   >> ~/.bash_profile
+	#echo "export TRASH" >> ~/.bash_profile
+	#echo just add the environment variable TRASH
+	#source ~/.bash_profile
+fi
+
+# if the safe Folder is not yet built, then build it under home directory 
+if [ ! -d "$TRASH" ]; then
+	mkdir $TRASH
+	echo just set up a safe Folder locate at "$TRASH"
+fi
+
+#check if the TRASH variable end with '/', if not add one
+if [ `echo -n $TRASH | tail -c 1` = "/" ]; then
+		path="$TRASH"
+	else
+		path="$TRASH/"
+fi
+
+#hold all options that user passed in, if none, just null string
+option=""
+
+#array of file pathes that user passed in
+file_list=()
+for i in "$@"; do
+	#if an argument start with '-', then assume is an option, append to option list
+	if [[ "$i" =~ ^- ]]; then
+		option="$option $i"
+	#then is a file, append to file_list array
+	else
+		file_list+=("$i")
+	fi
+done
+# start to take care all the files user intend to safe remove
+for j in ${file_list[@]}; do
+	#get the filename/directory name out of the long path (if any)
+	fileName=`basename "$j"` 
+	#form a new path to check if the file already safe removed
+        trashPath="$path$fileName"
+
+        if [ -f "$trashPath" -o -d "$trashPath" ]; then
+		# since it is a file/dir in the trash folder, then it already 
+		# been removed once, and this is the second time
+		# so I decide to remove the file with user's option if any
+                rm -r $option "$trashPath"
+		echo delete file: $fileName since it\'s been safe removed twice
+	# since the file is not in the trash folder
+	# then check if the path user provide is valid or not
+	# to be able to decide if we should proceed 
+	elif [ ! -f "$j" -a ! -d "$j" ] ; then
+		# the path user provide is not valid, reject it
+		echo  wrong path, cannot locate: "$j"
+	else
+	# at this point, it means this file is not yet removed, and is valid
+	# then safe remove it by either moving it to trash can,
+	# or delete it with option which user passed in
+		if [ -z ${option} ]; then
+			mv $j $TRASH
+			echo safe removing: "$j"
+		else
+			rm -r $option $j
+			echo removing file: $j with option $option
+		fi
+	fi
+	# end of for this file
+done
+		

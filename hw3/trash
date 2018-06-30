@@ -1,0 +1,26 @@
+#! /bin/bash
+# if there is no TRASH variable, exit right now
+if [ -z ${TRASH} ]; then
+	echo no TRASH variable, exit
+	exit 1
+# if the trash can is not built yet, exit right now
+elif [ ! -d "$TRASH" ]; then
+	echo there is no safe folder yet, nothing to rm
+else
+	#adding a '/' if the TRASH doesn't end with one
+	if [ `echo -n $TRASH | tail -c 1` = "/" ]; then
+		path="$TRASH"
+	else
+		path="$TRASH/"
+	fi
+	#trash should not take any arguments, print error message
+	if [ ! "$#" -eq 0 ]; then
+		echo trash should not take any arguments
+	fi
+	#perform deleting
+	/bin/rm -r "$path"*
+fi
+
+
+
+

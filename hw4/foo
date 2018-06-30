@@ -1,0 +1,35 @@
+#/bin/bash
+temp_dir=/tmp/XXX
+while [ -d "$temp_dir"  ]; do
+	temp_dir="${temp_dir}X"
+	echo "$temp_dir"
+done
+
+mkdir "$temp_dir"
+
+trap cleanup 0 1 2 3 15
+
+cleanup()
+{
+  rm -rf "$temp_dir"
+  exit 1
+}
+sleep 10
+
+basename=`basename "$0"` 
+filename="$basename.c"
+if [ ! -f "$filename" ]; then
+	echo "$filename" not exist
+	rm -rf "$temp_dir" 
+	exit 1;
+fi
+
+
+cp "$filename" "$temp_dir"
+
+cd "$temp_dir"
+gcc -std=c99 "$filename" -o "$basename"
+echo about to execute "$basename"
+
+"$basename" "$@"
+

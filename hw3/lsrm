@@ -1,0 +1,20 @@
+#! /bin/bash
+# if the envir var is not set yet, exit out right now
+if [ -z ${TRASH} ]; then
+	echo no TRASH environment variable, exit
+	exit 1
+
+#if the safe trash can is not built yet, exit right now
+elif [ ! -d "$TRASH" ]; then
+	echo there is no safe folder yet, nothing to count
+	exit 1
+#performing ls -l on safe trash can folder
+else
+	#lsrm should not take any argument, so print out error message
+	if [ ! "$#" -eq 0 ]; then
+		echo lsrm should not take any argument
+	fi
+
+	#perform ls -l on trashcan
+	/bin/ls -l $TRASH
+fi

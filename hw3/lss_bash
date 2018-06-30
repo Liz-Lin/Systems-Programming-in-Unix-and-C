@@ -1,0 +1,30 @@
+#!/bin/bash
+exec 2>err.txt
+is_file=false
+if [ $# -eq 0 ]; then
+	exec /bin/ls -l -S 
+else
+	m_command="/bin/ls "
+	prevs_command=" "
+	echo $@
+	for i in "$@"; do
+		if [[ $i = -* ]]; then
+			m_command="$m_command $i "
+			continue
+		else
+			is_file=true
+			m_command="$m_command $i "
+		fi
+	done
+	if ! $is_file; then 
+		curr_path=`pwd`
+		m_command="$m_command -lS $curr_path"
+	else
+		m_command="$m_command -dlS "	
+	fi
+	eval "$m_command"
+	if [ $? -ne 0 ]; then
+		echo $m_command one of the option faild.
+	fi
+fi
+

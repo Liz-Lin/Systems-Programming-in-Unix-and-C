@@ -1,0 +1,118 @@
+                                CS 146
+                                ======
+                              Assignment #4
+                 Due Thu 17 May 2018 at start of lecture
+
+1) [10 marks] Say you are really low on disk space on openlab, and you have some
+   utility programs in C that you like to use often, but you don't have enough
+   disk space to keep the compiled executables around all the time. Each program
+   consists of just one .c file.  However, you don't want to manually re-compile
+   each C program each time you want to use it.
+
+   Write a short shell script called "C-interp" which is intended to have soft
+   links point at it, and pretends to be a C language interpreter.  That is,
+   if you have C file "foo.c", then you would make a link "ln -s C-interp foo".
+   Then, what C-interp does, when called as "foo", is compile "foo.c" and run
+   the resulting executable on the arguments given to "foo".  (You can test it
+   on your solutions to the other questions in this assignment.)
+
+   Some caveats:
+   - delete ALL temporary files generated, inculding the executable after it's
+     been executed.
+   - To ensure you don't delete any files that exist before you start whose
+     names may conflict with the temporary filenames you choose, put *all*
+     temporary files (including the executable) in /tmp/DDD where DDD is a
+     random directory name (doesn't need to be 3 characters).  Be sure to
+     remove the directory after C-interp finishes.
+   - the executable should be called with argv[0] equal to the basename of the
+     .c file, without the '.c', eg "foo.c" gets called as "foo" (but the path
+     can [and should!] be different, so the compiled executable should be in a
+     temporary directory).
+   - to ensure that your executable name doesn't conflict with other users,
+     you should put the executable in a uniquely-named subdirectory of /tmp.
+     In fact, it would be best if all your temp files went into this directory,
+     as long as the entire directory is removed when the executable is finished.
+   - ensure that the temporary files are deleted even if the program is
+     interrupted.  ie, use the "trap" command in the Bourne shell to trap
+     signals 0 (Exit), 1 (Hangup), 2 (Interrupt) ,3 (Quit), and 15 (Terminate).
+     See signal(5) for a list and more details about signals.
+
+2) [20 marks] Write a filter in C that prints M lines out of every N.  It can
+   be done using the shell and awk (see ~wayne/pub/ics54).  It's more simple
+   and efficient in C.  The program's name is "every".  It is called like this:
+
+        $ every [-N,M] [<list-of-files>]
+
+   where N and M are both positive integers, M <= N.  (Anything in square
+   brackets '[]' is optional, and doesn't need to appear on the command line.
+   This is standard for Unix manual pages.)  The option argument, if present,
+   must come before any filenames.  If no "-N,M" option is on the command line,
+   then "every" should look for an environment variable called EVERY and take
+   its options from there, in the same format as the command line.  If "every"
+   can't find options either on the command line or in the environment variable
+   EVERY, then the default is "-1,1".  That is, with no options, "every"
+   acts just like cat(1).  For example, if we number lines starting at 0, then
+
+        $ every -10,2 foo.c
+
+   prints out the following lines of foo.c: 0,1, 10,11, 20,21, 30,31,
+   etc.  If M is omitted, eg
+
+        $ every -10 foo.c
+
+   then it defaults to 1.  (If either N or M is specified on the command line,
+   the environment variable EVERY should be ignored.) If multiple files are
+   given on the command line, each one should be handled INDEPENDENTLY, so
+   "-10,2" means lines 0,1,10,11, etc. of each file.
+
+
+3) [30 or 40 marks, see below] Re-write lss in C.  (This is the last time you'll
+   see "lss", I promise.)  You may use the standard I/O library; you don't
+   need to restrict yourself to Unix system calls like read(2) and write(2),
+   although you will still need to use SOME Unix system calls, like stat(2).
+   You may not use any shells directly or indirectly.  (For example, you
+   can't use system(3s).)
+
+   There are two versions of this program; an easier one, and a harder one.
+   The easier one is described first, and will get you at most 30 marks.
+
+   For 30 marks, it doesn't need to support any options, it doesn't need to take
+   any filenames, it doesn't need to print a "total" line, and it doesn't need
+   to do anything special with symbolic links or special files (like the ones
+   found in /dev).  However, if a link points nowhere, an appropriate error
+   message should be output, using perror(3c).  This is different than what
+   "ls -L" does; that's OK.  It does not ignore files whose names begin with
+   '.'.  It needs to work correctly for directories and regular files (S_IFDIR
+   and S_IFREG in stat(5), respectively).  In other words, in a directory
+   that contains only other directories, regular files, and symbolic links,
+   the output should look just like
+
+        $ /bin/ls -Lla | grep -v '^total' | sort -k 5nr
+
+   except symbolic links that point nowhere should cause an error.  (The -L
+   makes it easier for you: you only need to use stat(2), rather than *both*
+   lstat(2) and stat(2).)
+
+   In addition to the standard C I/O library, you should read the following
+   manual pages:  stat(2), stat(5), opendir(3c), readdir(3c), closedir(3c),
+   dirent(4), qsort(3c), getpwuid(3c), perror(3c), time(2), readlink(3c),
+   ctime(3c).  You MUST use qsort(3c) to do the sort.  You MUST check the
+   return values of *all* system calls and standard I/O functions for errors,
+   and use perror(3c) to print the error.  The time should be printed by
+   clipping characters 4 through 15 of the string returned by ctime(3c) (ie.,
+   don't do anything fancy for files older than 1 year, like ls(1) does.)
+
+   Extra 10 marks: (these are not bonus marks; this question is out of 40, but
+   you may choose to implement the subset above, and if you do it correctly,
+   it's worth 30 marks out of 40).  Implement a more full version of lss that
+   takes filenames and options as arguments.  It supports the options -a, -A,
+   and -L in standard Unix format like "-a -L" or "-La" (see getopt(3c)).  It
+   needs to handle symbolic links just like "ls -l" does (ie, you'll need to
+   use lstat(2) by default and print where symlinks point, but if "-L" is
+   specified and the file is a symlink then call stat(2).)  Finally, if a
+   file explicitly listed on the command line is actually a directory, then it
+   descends the directory just like ls(1) does.  No "total" line is necessary.
+
+   GENERAL COMMENTS: Style and modularity of questions 2 and 3 are important.
+   Try to keep the design simple and elegant.  You will probably have to make
+   extensive use of the course texbook and the online manual.

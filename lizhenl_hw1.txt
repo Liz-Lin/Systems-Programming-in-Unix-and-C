@@ -1,0 +1,45 @@
+CS 146 Homework 1
+Lizhen Lin lizhenl 82226790
+
+1) What is your home directory? How did you find out (commands used)?  	Home directory: /home/lizhenl —>by command: pwd or echo $HOME
+
+2)  What is your UID? How did you find out (commands used)? 
+	My UID: 29113 (lizhenl) —> by command: id lizhenl or id -u lizhenl
+
+3)  To what group(s) do you belong? How did you find out? 
+	Groups: 1001 (ugrad) —> by command: id lizhenl or id - G lizhenl
+
+4)  What is your "kill" character used for? 
+	‘kill’ is for terminating process without having to logout or reboot
+
+5)  If you remove execute permission for yourself from a directory (see chmod(1)), are you still allowed to create files in that directory? Can you cd into it? Can you "ls" it? Can you "ls -l" it? 
+	a) I still can create files, but cannot save it (write)
+	b) I cannot cd to it, permission denied
+	c) Technically I can because it still displays all the files and folders, but also it says permission denied first.
+	d) No I can’t, because all the information are replaced by the ‘?’ except the filename. 
+6)  If you make a hard link to a file, and then remove the original file, are the contents of the file actually removed? Why? How about if you make a symbolic link? Why? 
+	a) No, the content of the file still exist.
+	b) Because the inode’s reference counter is not zero yet, so the file is not yet removed. (the contact of the file will be removed when there are zero links link to that file)
+	c) The content disappear.
+	d) Because the symbolic link doesn’t not contain the content of the original data, it just points to the original file. So once the original file deleted, so the symbolic link stop functioning and it will give warning: no such file or directory.  
+7)  Are you allowed to "mv" a directory? Are you allowed to "cp" a directory? If so, how?  	Under consumption that user owns the directory/file or must be a privileged user, or must be writable by user.
+Yes I am allowed to mv a directory.
+mv source_path/  destination_path/
+Yes I am allowed to copy a directory
+cp -R source_path/  destination_path/   (-R recursively)
+
+8)  How many mounted file systems are there on odin.ics.uci.edu? How did you find out? (Commands) 
+	81
+	findmont | wc (-l) 
+9)  Using only "ls" (and maybe "grep"), can you find out the name of your login terminal? How? (Hint: cheat by first typing "who am i". Look also at the -L option of "ls".) 
+	$ ls -l /dev/pts/ | grep lizhenl
+	crw--w---- 1 lizhenl  tty  136, 15 Apr  3 13:21 15
+	name of my login terminal is : pts/15  
+10) In slide 8 from lecture #1, assume binary 00000000 represents register D0. Then the address translation from "FFDC" to binary is incorrect. Correct it. What is the machine language (binary) representation of the MOVE instruction? What about MUL? (Before you ask: yes, different instructions can take up different numbers of bytes/words.) 
+
+	FFDC: 11111111 11011100
+	MOVE: 1100101
+	MUL: 1010001 01011101
+
+
+ 

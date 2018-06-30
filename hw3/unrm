@@ -1,0 +1,33 @@
+#! /bin/bash
+# if the envir var is not set yet, exit right now
+if [ -z ${TRASH} ]; then
+	echo no TRASH variable, exit
+	exit 1
+# if the safe trash can is not exist, exit right now
+elif [ ! -d "$TRASH" ]; then
+	echo there is no safe folder yet, nothing to rm
+	exit 1
+# start to safe recover files 
+else
+	if [ $# -eq 0 ]; then
+		echo please enter a name to recover from trashcan, exit
+		exit 0
+	fi
+	#check if the TRASH end with '/', if not add one
+	if [ `echo -n $TRASH | tail -c 1` = "/" ]; then
+		path="$TRASH"
+	else
+		path="$TRASH/"
+	fi
+
+	#loop through all the file path that user passed in
+	for i in "$@"; do
+        	if [ -f "$path$i" -o -d "$path$i" ]; then
+                	`mv "$path$i" .`
+			echo safe recovered file $i
+		else
+			echo file $i does not exist in trash can
+		fi
+
+	done
+fi

@@ -1,0 +1,18 @@
+#! /bin/bash
+
+# if the envir var is not set yet, exit
+if [ -z ${TRASH} ]; then
+	echo TRASH is not defined, exit
+	exit 1
+
+# if the trash can is not built yet, exit
+elif [ ! -d "$TRASH" ]; then
+	echo there is no safe folder yet, nothing to count
+else
+	#durm should not take argument, print error message
+	if [ ! "$#" -eq 0 ]; then
+		echo durm should not take any argument
+	fi
+	# usage count
+	du -s "$TRASH"
+fi
